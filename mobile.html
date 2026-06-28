@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>글로벌구매팀 제조원가 개선 활동 현황판</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>글로벌구매팀 제조원가 개선 활동 현황판 (모바일)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
 
@@ -35,6 +35,8 @@
     --font-display:'Space Grotesk', 'Noto Sans KR', sans-serif;
     --font-body:'Noto Sans KR', sans-serif;
     --font-mono:'IBM Plex Mono', monospace;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
   }
 
   *{box-sizing:border-box;}
@@ -45,58 +47,58 @@
     font-family:var(--font-body);
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
+    overflow-x:hidden;
   }
 
-  .wrap{max-width:1320px;margin:0 auto;padding:28px 28px 60px;}
+  .wrap{
+    max-width:480px;
+    margin:0 auto;
+    padding:calc(16px + var(--safe-top)) 16px calc(28px + var(--safe-bottom));
+  }
 
   /* ---------- HEADER ---------- */
   .topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:24px;
-    padding-bottom:22px;
-    border-bottom:1px solid var(--line-strong);
-    margin-bottom:26px;
-    flex-wrap:wrap;
+    margin-bottom:18px;
   }
-  .title-block .eyebrow{
+  .eyebrow{
     font-family:var(--font-mono);
-    font-size:13px;
-    letter-spacing:0.14em;
+    font-size:11px;
+    letter-spacing:0.1em;
     text-transform:uppercase;
     color:var(--orion-red);
-    margin-bottom:8px;
+    margin-bottom:6px;
   }
-  .title-block h1{
+  h1{
     font-family:var(--font-display);
     font-weight:700;
-    font-size:36px;
+    font-size:22px;
+    line-height:1.3;
     letter-spacing:-0.01em;
-    margin:0 0 8px;
+    margin:0 0 10px;
     color:var(--ink);
   }
-  .title-block .sub{
-    font-size:16px;
+  .sub{
+    font-size:13px;
     color:var(--ink-dim);
+    margin-bottom:14px;
   }
-  .meta-cluster{
+  .meta-row{
     display:flex;
-    gap:10px;
+    gap:8px;
     align-items:center;
     flex-wrap:wrap;
   }
   .pill{
     font-family:var(--font-mono);
-    font-size:13.5px;
+    font-size:11px;
     color:var(--ink-dim);
     background:var(--panel);
     border:1px solid var(--line);
-    padding:9px 14px;
+    padding:6px 11px;
     border-radius:100px;
     display:flex;
     align-items:center;
-    gap:7px;
+    gap:6px;
     white-space:nowrap;
   }
   .pill .dot{
@@ -110,71 +112,73 @@
     70%{ box-shadow:0 0 0 6px rgba(127,165,111,0); }
     100%{ box-shadow:0 0 0 0 rgba(127,165,111,0); }
   }
-  .btn{
+  .refresh-btn{
     font-family:var(--font-mono);
-    font-size:13.5px;
+    font-size:11px;
     color:var(--ink);
     background:var(--panel-2);
     border:1px solid var(--line-strong);
-    padding:9px 16px;
+    padding:6px 13px;
     border-radius:100px;
     cursor:pointer;
-    transition:border-color .15s, background .15s;
     display:inline-flex;
     align-items:center;
     text-decoration:none;
-    white-space:nowrap;
   }
-  .btn:hover{ border-color: var(--orion-red); background:#2a3036; }
+  .refresh-btn:active{ border-color:var(--orion-red); }
+  #refreshBtn{ margin-left:auto; }
 
-  /* ---------- KPI ROW ---------- */
-  .kpi-row{
+  /* ---------- KPI: horizontal scroll snap ---------- */
+  .kpi-grid{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-    margin-bottom:26px;
+    grid-template-columns:repeat(4, 1fr);
+    gap:7px;
+    margin-bottom:18px;
   }
   .kpi{
     background:var(--panel);
     border:1px solid var(--line);
-    border-radius:14px;
-    padding:18px 20px;
+    border-radius:12px;
+    padding:10px 9px;
     position:relative;
     overflow:hidden;
+    min-width:0;
   }
   .kpi::before{
     content:'';
-    position:absolute; top:0; left:0; width:3px; height:100%;
+    position:absolute; top:0; left:0; width:100%; height:3px;
     background:var(--accent, var(--amber));
   }
   .kpi .label{
-    font-size:14px;
+    font-size:9.5px;
     color:var(--ink-dim);
-    margin-bottom:12px;
-    display:flex; justify-content:space-between; align-items:baseline;
-  }
-  .kpi .label span.tag{
-    font-family:var(--font-mono);
-    font-size:11.5px;
-    color:var(--ink-faint);
+    margin-bottom:6px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    line-height:1.25;
   }
   .kpi .value{
     font-family:var(--font-mono);
     font-weight:600;
-    font-size:38px;
+    font-size:18px;
     color:var(--ink);
     letter-spacing:-0.01em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
   .kpi .value .unit{
-    font-size:17px;
+    font-size:10px;
     color:var(--ink-dim);
-    margin-left:4px;
+    margin-left:2px;
     font-family:var(--font-body);
   }
   .kpi .footnote{
-    margin-top:9px;
-    font-size:13.5px;
+    margin-top:5px;
+    font-size:9px;
     color:var(--ink-faint);
+    line-height:1.25;
   }
   .kpi.amber{ --accent: var(--amber); }
   .kpi.clay{ --accent: var(--clay); }
@@ -182,34 +186,36 @@
   .kpi.wheat{ --accent: var(--wheat); }
   .kpi.orion{ --accent: var(--orion-red); }
 
-  /* ---------- PIPELINE ---------- */
+  /* ---------- SECTION HEAD ---------- */
   .section-head{
     display:flex; justify-content:space-between; align-items:baseline;
-    margin-bottom:14px; margin-top:8px;
+    margin-bottom:10px; margin-top:4px;
   }
   .section-head h2{
     font-family:var(--font-display);
-    font-size:20px; font-weight:600;
+    font-size:15px; font-weight:600;
     margin:0;
     color:var(--ink);
   }
   .section-head .hint{
-    font-size:14px; color:var(--ink-faint);
+    font-size:11px; color:var(--ink-faint);
   }
 
-  .pipeline{
+  /* ---------- PIPELINE: 3x2 grid ---------- */
+  .pipeline-grid{
     display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:10px;
-    margin-bottom:30px;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+    margin-bottom:20px;
   }
   .stage{
     background:var(--panel);
     border:1px solid var(--line);
     border-radius:12px;
-    padding:16px 16px 18px;
+    padding:10px 10px 11px;
     position:relative;
     overflow:hidden;
+    min-width:0;
   }
   .stage::before{
     content:'';
@@ -224,256 +230,240 @@
   .stage.s6{ --stage-color: var(--s6); }
   .stage .num{
     font-family:var(--font-mono);
-    font-size:13px;
+    font-size:9.5px;
     color: var(--stage-color, var(--ink-faint));
   }
   .stage .name{
     font-family:var(--font-display);
     font-weight:600;
-    font-size:16px;
-    margin:7px 0 16px;
+    font-size:11px;
+    margin:4px 0 8px;
     color:var(--ink);
-    min-height:40px;
+    min-height:28px;
+    line-height:1.28;
+    word-break:keep-all;
   }
   .stage .count{
     font-family:var(--font-mono);
-    font-size:32px;
+    font-size:19px;
     font-weight:600;
     color:var(--ink);
   }
   .stage .count .of{
-    font-size:14px; color:var(--ink-faint); font-family:var(--font-body);
+    font-size:10px; color:var(--ink-faint); font-family:var(--font-body);
   }
   .stage .bar-track{
-    height:5px; background:rgba(255,255,255,0.06); border-radius:4px; margin-top:10px; overflow:hidden;
+    height:4px; background:rgba(255,255,255,0.06); border-radius:4px; margin-top:8px; overflow:hidden;
   }
   .stage .bar-fill{
     height:100%; border-radius:4px;
     background: var(--stage-color, var(--amber));
   }
-  .stage::after{
-    content:'';
-    position:absolute;
-    right:-15px; top:50%;
-    transform:translateY(-50%);
-    width:0;height:0;
-    border-top:5px solid transparent;
-    border-bottom:5px solid transparent;
-    border-left:6px solid var(--line-strong);
-    z-index:2;
-  }
-  .stage:last-child::after{ display:none; }
 
-  /* ---------- FILTER BAR ---------- */
-  .filter-bar{
-    display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap;
+  /* ---------- FILTER ---------- */
+  .filter-scroll{
+    display:flex; gap:7px; overflow-x:auto;
+    margin:0 -16px 12px;
+    padding:2px 16px 4px;
+    -webkit-overflow-scrolling:touch;
   }
+  .filter-scroll::-webkit-scrollbar{ display:none; }
   .chip{
+    flex:0 0 auto;
     font-family:var(--font-mono);
-    font-size:14px;
-    padding:9px 16px;
+    font-size:12.5px;
+    padding:7px 14px;
     border-radius:100px;
     border:1px solid var(--line-strong);
     background:transparent;
     color:var(--ink-dim);
-    cursor:pointer;
-    transition:all .15s;
     white-space:nowrap;
   }
-  .chip:hover{ border-color:var(--orion-red); color:var(--ink); }
   .chip.active{
     background:var(--orion-red-soft);
     border-color:var(--orion-red);
     color:#ff5468;
   }
   .search-input{
-    margin-left:auto;
+    width:100%;
     background:var(--panel);
     border:1px solid var(--line-strong);
     border-radius:100px;
-    padding:10px 18px;
+    padding:11px 16px;
     color:var(--ink);
     font-family:var(--font-body);
-    font-size:15px;
-    min-width:240px;
+    font-size:14px;
     outline:none;
+    margin-bottom:14px;
   }
   .search-input::placeholder{ color:var(--ink-faint); }
   .search-input:focus{ border-color:var(--orion-red); }
 
-  /* ---------- TABLE ---------- */
-  .table-panel{
+  /* ---------- SORT BAR ---------- */
+  .sort-row{
+    display:flex; gap:7px; overflow-x:auto;
+    margin:0 -16px 14px;
+    padding:2px 16px 4px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .sort-row::-webkit-scrollbar{ display:none; }
+  .sort-chip{
+    flex:0 0 auto;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    padding:6px 12px;
+    border-radius:100px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--ink-faint);
+    white-space:nowrap;
+    display:flex; align-items:center; gap:4px;
+  }
+  .sort-chip.active{
+    color:var(--ink);
+    border-color:var(--line-strong);
+  }
+  .sort-chip .arrow{ font-size:10px; }
+
+  /* ---------- CARDS ---------- */
+  .card-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+  .task-card{
     background:var(--panel);
     border:1px solid var(--line);
     border-radius:14px;
-    overflow:hidden;
-    margin-bottom:30px;
+    padding:14px 15px;
   }
-  table{ width:100%; border-collapse:collapse; table-layout:fixed; }
-  thead th{
-    text-align:left;
-    font-family:var(--font-mono);
-    font-size:13px;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    color:var(--ink-dim);
-    padding:14px 12px;
-    border-bottom:1px solid var(--line-strong);
-    background:var(--panel-2);
-    white-space:normal;
-    line-height:1.4;
-    cursor:pointer;
-    user-select:none;
-    word-break:keep-all;
+  .card-top{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:10px; margin-bottom:8px;
   }
-  thead th:hover{ color:var(--ink); }
-  tbody td{
-    padding:16px 12px;
-    border-bottom:1px solid var(--line);
-    font-size:16px;
-    color:var(--ink);
-    vertical-align:middle;
-    overflow:hidden;
+  .card-no{
+    font-family:var(--font-mono); color:var(--ink-faint); font-size:12px;
+    flex-shrink:0; padding-top:2px;
   }
-  tbody tr:last-child td{ border-bottom:none; }
-  tbody tr:hover{ background:rgba(255,255,255,0.02); }
-  .t-no{ font-family:var(--font-mono); color:var(--ink-faint); font-size:15px; }
-  .t-title{ font-weight:500; white-space:normal; word-break:keep-all; line-height:1.4; }
-  .t-status{ color:var(--ink-dim); font-size:15px; white-space:normal; word-break:keep-all; line-height:1.4; }
+  .card-title{
+    font-weight:600; font-size:15px; line-height:1.4; color:var(--ink);
+    flex:1;
+  }
   .badge{
     display:inline-block;
     font-family:var(--font-mono);
-    font-size:13.5px;
-    padding:4px 11px;
+    font-size:11px;
+    padding:3px 9px;
     border-radius:6px;
     white-space:nowrap;
+    flex-shrink:0;
   }
   .badge.cat-통합구매{ background:rgba(216,178,108,0.14); color:#d8b26c; }
   .badge.cat-원가절감{ background:var(--moss-soft); color:var(--moss); }
   .badge.cat-인상방어{ background:var(--clay-soft); color:var(--clay); }
   .badge.cat-수급안정{ background:rgba(120,150,200,0.16); color:#8fb0d9; }
-  .stage-pip{
-    display:flex; gap:3px;
+
+  .card-meta{
+    display:flex; flex-wrap:wrap; gap:6px 14px;
+    font-size:12.5px; color:var(--ink-dim);
+    margin-bottom:10px;
   }
-  .stage-pip i{
-    width:15px; height:8px; border-radius:2px;
+  .card-meta .meta-item{ display:flex; gap:5px; align-items:baseline; }
+  .card-meta .meta-label{ color:var(--ink-faint); font-size:11px; }
+  .meta-item .unassigned{ color:var(--ink-faint); font-style:italic; }
+
+  .card-stage{
+    display:flex; align-items:center; gap:8px; margin-bottom:10px;
+  }
+  .card-stage .stage-pip{ display:flex; gap:3px; }
+  .card-stage .stage-pip i{
+    width:16px; height:7px; border-radius:2px;
     background: rgba(255,255,255,0.08);
     flex-shrink:0;
   }
-  .stage-pip i.on.p1{ background: var(--s1); }
-  .stage-pip i.on.p2{ background: var(--s2); }
-  .stage-pip i.on.p3{ background: var(--s3); }
-  .stage-pip i.on.p4{ background: var(--s4); }
-  .stage-pip i.on.p5{ background: var(--s5); }
-  .stage-pip i.on.p6{ background: var(--s6); }
-  .amt{ font-family:var(--font-mono); text-align:right; font-size:16px; }
-  .amt.neg{ color:var(--clay); }
-  .amt.pos{ color:var(--moss); }
-  .amt.zero{ color:var(--ink-faint); }
-  .person-tag{
-    font-size:15px; color:var(--ink-dim);
-    word-break:keep-all;
-    display:inline-block;
+  .card-stage .stage-pip i.on.p1{ background: var(--s1); }
+  .card-stage .stage-pip i.on.p2{ background: var(--s2); }
+  .card-stage .stage-pip i.on.p3{ background: var(--s3); }
+  .card-stage .stage-pip i.on.p4{ background: var(--s4); }
+  .card-stage .stage-pip i.on.p5{ background: var(--s5); }
+  .card-stage .stage-pip i.on.p6{ background: var(--s6); }
+  .card-stage .stage-label{ font-size:12px; color:var(--ink-dim); }
+
+  .card-amounts{
+    display:flex; gap:10px; margin-bottom:10px;
   }
-  .person-tag.unassigned{
-    color:var(--ink-faint);
-    font-style:italic;
+  .amt-box{
+    flex:1;
+    background:var(--panel-2);
+    border-radius:10px;
+    padding:8px 10px;
+  }
+  .amt-box .amt-label{ font-size:10.5px; color:var(--ink-faint); margin-bottom:3px; }
+  .amt-box .amt-value{
+    font-family:var(--font-mono); font-weight:600; font-size:16px;
+  }
+  .amt-value.neg{ color:var(--clay); }
+  .amt-value.pos{ color:var(--moss); }
+  .amt-value.zero{ color:var(--ink-faint); }
+
+  .card-status{
+    font-size:13px; color:var(--ink-dim); line-height:1.45;
+    padding-top:8px;
+    border-top:1px solid var(--line);
   }
 
   .empty-state{
-    text-align:center; padding:60px 20px; color:var(--ink-faint);
+    text-align:center; padding:50px 16px; color:var(--ink-faint);
   }
-  .empty-state .big{ font-size:32px; margin-bottom:10px; }
+  .empty-state .big{ font-size:28px; margin-bottom:8px; }
 
   footer{
-    text-align:center; padding-top:20px; color:var(--ink-faint); font-size:11.5px; font-family:var(--font-mono);
+    text-align:center; padding-top:6px; color:var(--ink-faint); font-size:10.5px; font-family:var(--font-mono);
   }
 
-  @media (max-width: 980px){
-    .kpi-row{ grid-template-columns:repeat(2,1fr); }
-    .pipeline{ grid-template-columns:repeat(3,1fr); }
-    .stage::after{ display:none; }
-    .search-input{ margin-left:0; width:100%; }
-  }
-  @media (max-width: 600px){
-    .pipeline{ grid-template-columns:repeat(2,1fr); }
-    .topbar{ flex-direction:column; }
-    .table-panel{ overflow-x:auto; }
-    table{ font-size:12px; table-layout:auto; min-width:720px; }
-  }
-
-  ::-webkit-scrollbar{ height:8px; width:8px; }
-  ::-webkit-scrollbar-thumb{ background:var(--line-strong); border-radius:4px; }
-  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar{ height:0; width:0; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="topbar">
-    <div class="title-block">
-      <div class="eyebrow">Global Procurement · Cost Improvement Pipeline</div>
-      <h1>글로벌구매팀 제조원가 개선 활동 현황판</h1>
-      <div class="sub" id="subhead">데이터 불러오는 중…</div>
-    </div>
-    <div class="meta-cluster">
+    <div class="eyebrow">Global Procurement · Mobile</div>
+    <h1>글로벌구매팀 제조원가 개선 활동 현황판</h1>
+    <div class="sub" id="subhead">데이터 불러오는 중…</div>
+    <div class="meta-row">
       <span class="pill live" id="sourcePill"><span class="dot"></span><span id="sourceLabel">로컬 데이터</span></span>
-      <span class="pill" id="updatedPill">최종 갱신 —</span>
-      <a class="btn" href="mobile.html" id="mobileLink">📱 모바일 버전 보기</a>
-      <button class="btn" id="refreshBtn">새로고침</button>
+      <a class="refresh-btn" href="index.html">🖥️ PC 버전</a>
+      <button class="refresh-btn" id="refreshBtn">새로고침</button>
     </div>
   </div>
 
-  <div class="kpi-row" id="kpiRow"></div>
+  <div class="kpi-grid" id="kpiRow"></div>
 
   <div class="section-head">
     <h2>단계별 파이프라인</h2>
-    <div class="hint">연구소 의뢰 → 생산적용까지 6단계</div>
+    <div class="hint">6단계</div>
   </div>
-  <div class="pipeline" id="pipelineRow"></div>
+  <div class="pipeline-grid" id="pipelineRow"></div>
+
+  <input class="search-input" id="searchInput" placeholder="과제명, 담당자, 관리번호 검색…">
+
+  <div class="filter-scroll" id="filterBar">
+    <button class="chip active" data-filter="all">전체</button>
+  </div>
+
+  <div class="sort-row" id="sortRow">
+    <button class="sort-chip" data-sort="No">No</button>
+    <button class="sort-chip" data-sort="현재단계번호">진행단계</button>
+    <button class="sort-chip" data-sort="효과금액_한국법인">한국법인 금액</button>
+    <button class="sort-chip" data-sort="효과금액_전체법인">전체법인 금액</button>
+  </div>
 
   <div class="section-head">
     <h2>과제 목록</h2>
     <div class="hint" id="rowCountHint"></div>
   </div>
 
-  <div class="filter-bar" id="filterBar">
-    <button class="chip active" data-filter="all">전체</button>
-    <input class="search-input" id="searchInput" placeholder="과제명, 담당자, 관리번호 검색…">
-  </div>
-
-  <div class="table-panel">
-    <table id="dataTable">
-      <colgroup>
-        <col style="width:48px;">
-        <col style="width:auto;">
-        <col style="width:90px;">
-        <col style="width:72px;">
-        <col style="width:72px;">
-        <col style="width:130px;">
-        <col style="width:78px;">
-        <col style="width:78px;">
-        <col style="width:auto;">
-      </colgroup>
-      <thead>
-        <tr>
-          <th data-key="No">No</th>
-          <th data-key="과제명">과제명</th>
-          <th data-key="과제구분">구분</th>
-          <th data-key="구매담당자">구매<br>담당자</th>
-          <th data-key="연구소담당자">연구소<br>담당자</th>
-          <th data-key="현재단계번호">진행단계</th>
-          <th data-key="효과금액_한국법인">한국법인<br>억원</th>
-          <th data-key="효과금액_전체법인">전체법인<br>억원</th>
-          <th data-key="진행현황">진행현황</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-    <div class="empty-state" id="emptyState" style="display:none;">
-      <div class="big">∅</div>
-      검색 결과가 없습니다
-    </div>
+  <div class="card-list" id="cardList"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <div class="big">∅</div>
+    검색 결과가 없습니다
   </div>
 
   <footer id="footerNote">CSV 연동 대시보드 · 시트를 수정하면 새로고침 시 반영됩니다</footer>
@@ -482,8 +472,6 @@
 
 <script>
 /* ============== 설정 ============== */
-// Google Sheets를 "웹에 게시 → CSV" 한 URL을 여기에 넣으면 자동으로 그 데이터를 불러옵니다.
-// 비워두면 업로드 시점의 데이터(아래 EMBEDDED_CSV)를 보여줍니다.
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTXCkUlxTWiBlu8bZe_BbkCYwTF68_6sJ8MJcO5vYjEX9-jl8L4gip1rBMA0VAjd6oDnRslAImdZ4fW/pub?gid=1628680995&single=true&output=csv";
 
 const STAGES = ["연구소 의뢰","Lab 테스트","시생산 테스트","원료확정/등록","구매요청,계약","생산적용"];
@@ -554,7 +542,6 @@ let sortDir = 1;
 function parseCSV(text){
   const rows = [];
   let i=0, field='', row=[], inQuotes=false;
-  // strip BOM
   if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
   while(i < text.length){
     const c = text[i];
@@ -597,32 +584,30 @@ async function loadData(){
       if(!res.ok) throw new Error('fetch failed: ' + res.status);
       const text = await res.text();
       allRows = parseCSV(text);
-      document.getElementById('sourceLabel').textContent = 'Google Sheets 연동';
+      document.getElementById('sourceLabel').textContent = 'Sheets 연동';
       document.getElementById('sourcePill').classList.add('live');
     }catch(e){
       console.error(e);
       allRows = parseCSV(EMBEDDED_CSV);
-      document.getElementById('sourceLabel').textContent = '연동 실패 — 로컬 데이터 표시';
+      document.getElementById('sourceLabel').textContent = '연동 실패 — 로컬 표시';
       document.getElementById('sourcePill').classList.remove('live');
     }
   } else {
     allRows = parseCSV(EMBEDDED_CSV);
-    document.getElementById('sourceLabel').textContent = '로컬 데이터 (시트 미연동)';
+    document.getElementById('sourceLabel').textContent = '로컬 데이터';
     document.getElementById('sourcePill').classList.remove('live');
   }
-  document.getElementById('updatedPill').textContent = '최종 갱신 ' + new Date().toLocaleString('ko-KR', {hour12:false});
   render();
 }
 
 /* ============== 렌더링 ============== */
 function render(){
   const rows = allRows;
-  document.getElementById('subhead').textContent = `총 ${rows.length}건의 절감/방어 과제 · 6단계 파이프라인 추적`;
-
+  document.getElementById('subhead').textContent = `총 ${rows.length}건 · 6단계 파이프라인 추적`;
   renderKPIs(rows);
   renderPipeline(rows);
   renderFilters(rows);
-  renderTable();
+  renderCards();
 }
 
 function renderKPIs(rows){
@@ -639,14 +624,14 @@ function renderKPIs(rows){
     if(stage !== null && stage < 6) activeCount++;
   });
   const kpis = [
-    {label:'한국법인 연간 절감액', tag:'KOR', value: totalKR.toFixed(1), unit:'억원', accent:'clay', note:'음수는 비용 절감 효과'},
-    {label:'전체법인 연간 절감액', tag:'GLOBAL', value: totalALL.toFixed(1), unit:'억원', accent:'orion', note: rows.length + '개 과제 합산'},
-    {label:'진행 중인 과제', tag:'ACTIVE', value: activeCount, unit:'건', accent:'wheat', note:'1~5단계 진행 중'},
-    {label:'생산적용 완료', tag:'DONE', value: completeCount, unit:'건', accent:'moss', note:'6단계 도달'},
+    {label:'한국법인', value: totalKR.toFixed(1), unit:'억', accent:'clay', note:'연간 절감'},
+    {label:'전체법인', value: totalALL.toFixed(1), unit:'억', accent:'orion', note:'연간 절감'},
+    {label:'진행과제', value: activeCount, unit:'건', accent:'wheat', note:'1~5단계'},
+    {label:'완료과제', value: completeCount, unit:'건', accent:'moss', note:'6단계'},
   ];
   document.getElementById('kpiRow').innerHTML = kpis.map(k => `
     <div class="kpi ${k.accent}">
-      <div class="label">${k.label}<span class="tag">${k.tag}</span></div>
+      <div class="label">${k.label}</div>
       <div class="value">${k.value}<span class="unit">${k.unit}</span></div>
       <div class="footnote">${k.note}</div>
     </div>
@@ -677,9 +662,7 @@ function renderPipeline(rows){
 function renderFilters(rows){
   const cats = [...new Set(rows.map(r => r['과제구분']).filter(Boolean))];
   const bar = document.getElementById('filterBar');
-  const existing = bar.querySelectorAll('.chip[data-filter]:not([data-filter="all"])');
-  existing.forEach(e => e.remove());
-  const searchInput = document.getElementById('searchInput');
+  bar.querySelectorAll('.chip[data-filter]:not([data-filter="all"])').forEach(e => e.remove());
   cats.forEach(cat => {
     const btn = document.createElement('button');
     btn.className = 'chip';
@@ -689,16 +672,16 @@ function renderFilters(rows){
       activeCatFilter = cat;
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
-      renderTable();
+      renderCards();
     });
-    bar.insertBefore(btn, searchInput);
+    bar.appendChild(btn);
   });
   const allBtn = bar.querySelector('[data-filter="all"]');
   allBtn.onclick = () => {
     activeCatFilter = 'all';
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
     allBtn.classList.add('active');
-    renderTable();
+    renderCards();
   };
 }
 
@@ -723,19 +706,20 @@ function getFilteredSorted(){
   return rows;
 }
 
-function renderTable(){
+function renderCards(){
   const rows = getFilteredSorted();
-  document.getElementById('rowCountHint').textContent = `${rows.length}건 표시 중`;
-  const tbody = document.getElementById('tableBody');
+  document.getElementById('rowCountHint').textContent = `${rows.length}건`;
+  const list = document.getElementById('cardList');
   const empty = document.getElementById('emptyState');
   if(!rows.length){
-    tbody.innerHTML = '';
+    list.innerHTML = '';
     empty.style.display = 'block';
     return;
   }
   empty.style.display = 'none';
-  tbody.innerHTML = rows.map(r => {
+  list.innerHTML = rows.map(r => {
     const stageNum = num(r['현재단계번호']) || 0;
+    const stageName = r['현재단계명'] || '';
     const pips = STAGES.map((_,i) => `<i class="${i < stageNum ? 'on p'+(i+1) : ''}"></i>`).join('');
     const kr = num(r['효과금액_한국법인']);
     const all = num(r['효과금액_전체법인']);
@@ -743,21 +727,34 @@ function renderTable(){
     const allClass = all === null ? '' : (all < 0 ? 'neg' : (all > 0 ? 'pos':'zero'));
     const catSafe = (r['과제구분']||'').replace(/[^가-힣A-Za-z0-9]/g,'');
     const labPerson = (r['연구소담당자']||'').trim();
-    const labCell = labPerson
-      ? `<span class="person-tag">${escapeHtml(labPerson)}</span>`
-      : `<span class="person-tag unassigned">미정</span>`;
+    const labHtml = labPerson ? escapeHtml(labPerson) : '<span class="unassigned">미정</span>';
     return `
-      <tr>
-        <td class="t-no">${r['No']||''}</td>
-        <td class="t-title">${escapeHtml(r['과제명']||'')}</td>
-        <td><span class="badge cat-${catSafe}">${escapeHtml(r['과제구분']||'')}</span></td>
-        <td class="person-tag">${escapeHtml(r['구매담당자']||'')}</td>
-        <td>${labCell}</td>
-        <td><div class="stage-pip" title="${escapeHtml(r['현재단계명']||'')}">${pips}</div></td>
-        <td class="amt ${krClass}">${kr === null ? '—' : kr.toFixed(1)}</td>
-        <td class="amt ${allClass}">${all === null ? '—' : all.toFixed(1)}</td>
-        <td class="t-status">${escapeHtml(r['진행현황']||'')}</td>
-      </tr>
+      <div class="task-card">
+        <div class="card-top">
+          <span class="card-no">#${r['No']||''}</span>
+          <span class="card-title">${escapeHtml(r['과제명']||'')}</span>
+          <span class="badge cat-${catSafe}">${escapeHtml(r['과제구분']||'')}</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-label">구매</span>${escapeHtml(r['구매담당자']||'')}</span>
+          <span class="meta-item"><span class="meta-label">연구소</span>${labHtml}</span>
+        </div>
+        <div class="card-stage">
+          <div class="stage-pip" title="${escapeHtml(stageName)}">${pips}</div>
+          <span class="stage-label">${escapeHtml(stageName)}</span>
+        </div>
+        <div class="card-amounts">
+          <div class="amt-box">
+            <div class="amt-label">한국법인 (억원)</div>
+            <div class="amt-value ${krClass}">${kr === null ? '—' : kr.toFixed(1)}</div>
+          </div>
+          <div class="amt-box">
+            <div class="amt-label">전체법인 (억원)</div>
+            <div class="amt-value ${allClass}">${all === null ? '—' : all.toFixed(1)}</div>
+          </div>
+        </div>
+        <div class="card-status">${escapeHtml(r['진행현황']||'')}</div>
+      </div>
     `;
   }).join('');
 }
@@ -769,18 +766,26 @@ function escapeHtml(s){
 /* ============== 이벤트 ============== */
 document.getElementById('searchInput').addEventListener('input', (e) => {
   searchTerm = e.target.value;
-  renderTable();
+  renderCards();
 });
 document.getElementById('refreshBtn').addEventListener('click', loadData);
-document.querySelectorAll('#dataTable thead th').forEach(th => {
-  th.addEventListener('click', () => {
-    const key = th.dataset.key;
+document.querySelectorAll('.sort-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.sort;
     if(sortKey === key){ sortDir *= -1; } else { sortKey = key; sortDir = 1; }
-    renderTable();
+    document.querySelectorAll('.sort-chip').forEach(c => {
+      c.classList.remove('active');
+      c.querySelector('.arrow')?.remove();
+    });
+    btn.classList.add('active');
+    const arrow = document.createElement('span');
+    arrow.className = 'arrow';
+    arrow.textContent = sortDir === 1 ? '▲' : '▼';
+    btn.appendChild(arrow);
+    renderCards();
   });
 });
 
-/* 5분마다 자동 새로고침 (시트 연동 시에만 의미 있음) */
 setInterval(loadData, 5*60*1000);
 
 loadData();
