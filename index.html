@@ -305,7 +305,7 @@
     overflow:hidden;
     margin-bottom:30px;
   }
-  table{ width:100%; border-collapse:collapse; }
+  table{ width:100%; border-collapse:collapse; table-layout:fixed; }
   thead th{
     text-align:left;
     font-family:var(--font-mono);
@@ -313,26 +313,29 @@
     letter-spacing:0.06em;
     text-transform:uppercase;
     color:var(--ink-dim);
-    padding:16px 18px;
+    padding:14px 12px;
     border-bottom:1px solid var(--line-strong);
     background:var(--panel-2);
-    white-space:nowrap;
+    white-space:normal;
+    line-height:1.4;
     cursor:pointer;
     user-select:none;
+    word-break:keep-all;
   }
   thead th:hover{ color:var(--ink); }
   tbody td{
-    padding:16px 18px;
+    padding:16px 12px;
     border-bottom:1px solid var(--line);
     font-size:16px;
     color:var(--ink);
     vertical-align:middle;
+    overflow:hidden;
   }
   tbody tr:last-child td{ border-bottom:none; }
   tbody tr:hover{ background:rgba(255,255,255,0.02); }
   .t-no{ font-family:var(--font-mono); color:var(--ink-faint); font-size:15px; }
-  .t-title{ font-weight:500; max-width:300px; }
-  .t-status{ color:var(--ink-dim); font-size:15px; max-width:280px; }
+  .t-title{ font-weight:500; white-space:normal; word-break:keep-all; line-height:1.4; }
+  .t-status{ color:var(--ink-dim); font-size:15px; white-space:normal; word-break:keep-all; line-height:1.4; }
   .badge{
     display:inline-block;
     font-family:var(--font-mono);
@@ -346,11 +349,12 @@
   .badge.cat-인상방어{ background:var(--clay-soft); color:var(--clay); }
   .badge.cat-수급안정{ background:rgba(120,150,200,0.16); color:#8fb0d9; }
   .stage-pip{
-    display:flex; gap:4px;
+    display:flex; gap:3px;
   }
   .stage-pip i{
-    width:18px; height:8px; border-radius:2px;
+    width:15px; height:8px; border-radius:2px;
     background: rgba(255,255,255,0.08);
+    flex-shrink:0;
   }
   .stage-pip i.on.p1{ background: var(--s1); }
   .stage-pip i.on.p2{ background: var(--s2); }
@@ -364,6 +368,8 @@
   .amt.zero{ color:var(--ink-faint); }
   .person-tag{
     font-size:15px; color:var(--ink-dim);
+    word-break:keep-all;
+    display:inline-block;
   }
   .person-tag.unassigned{
     color:var(--ink-faint);
@@ -388,8 +394,8 @@
   @media (max-width: 600px){
     .pipeline{ grid-template-columns:repeat(2,1fr); }
     .topbar{ flex-direction:column; }
-    table{ font-size:12px; }
-    .t-title{ max-width:160px; }
+    .table-panel{ overflow-x:auto; }
+    table{ font-size:12px; table-layout:auto; min-width:720px; }
   }
 
   ::-webkit-scrollbar{ height:8px; width:8px; }
@@ -433,16 +439,27 @@
 
   <div class="table-panel">
     <table id="dataTable">
+      <colgroup>
+        <col style="width:48px;">
+        <col style="width:auto;">
+        <col style="width:90px;">
+        <col style="width:72px;">
+        <col style="width:72px;">
+        <col style="width:130px;">
+        <col style="width:78px;">
+        <col style="width:78px;">
+        <col style="width:auto;">
+      </colgroup>
       <thead>
         <tr>
           <th data-key="No">No</th>
           <th data-key="과제명">과제명</th>
           <th data-key="과제구분">구분</th>
-          <th data-key="구매담당자">구매담당자</th>
-          <th data-key="연구소담당자">연구소담당자</th>
+          <th data-key="구매담당자">구매<br>담당자</th>
+          <th data-key="연구소담당자">연구소<br>담당자</th>
           <th data-key="현재단계번호">진행단계</th>
-          <th data-key="효과금액_한국법인">한국법인 (억원)</th>
-          <th data-key="효과금액_전체법인">전체법인 (억원)</th>
+          <th data-key="효과금액_한국법인">한국법인<br>억원</th>
+          <th data-key="효과금액_전체법인">전체법인<br>억원</th>
           <th data-key="진행현황">진행현황</th>
         </tr>
       </thead>
