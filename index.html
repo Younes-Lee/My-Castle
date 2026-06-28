@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>구매 절감 활동진행 현황판</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#16191c;
+    --bg-soft:#1d2226;
+    --panel:#21262b;
+    --panel-2:#262c31;
+    --line: rgba(255,255,255,0.07);
+    --line-strong: rgba(255,255,255,0.14);
+    --ink:#eceae4;
+    --ink-dim:#9aa0a6;
+    --ink-faint:#6b7178;
+    --amber:#e8965a;
+    --amber-soft: rgba(232,150,90,0.16);
+    --moss:#7fa56f;
+    --moss-soft: rgba(127,165,111,0.16);
+    --clay:#c2624a;
+    --clay-soft: rgba(194,98,74,0.16);
+    --wheat:#d9c189;
+    --font-display:'Space Grotesk', 'Noto Sans KR', sans-serif;
+    --font-body:'Noto Sans KR', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  .wrap{max-width:1320px;margin:0 auto;padding:28px 28px 60px;}
+
+  /* ---------- HEADER ---------- */
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+    padding-bottom:22px;
+    border-bottom:1px solid var(--line-strong);
+    margin-bottom:26px;
+    flex-wrap:wrap;
+  }
+  .title-block .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:8px;
+  }
+  .title-block h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:30px;
+    letter-spacing:-0.01em;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .title-block .sub{
+    font-size:13.5px;
+    color:var(--ink-dim);
+  }
+  .meta-cluster{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .pill{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    color:var(--ink-dim);
+    background:var(--panel);
+    border:1px solid var(--line);
+    padding:7px 12px;
+    border-radius:100px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    white-space:nowrap;
+  }
+  .pill .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--moss);
+    box-shadow:0 0 0 3px var(--moss-soft);
+  }
+  .pill.live .dot{ animation: pulse 2s infinite; }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(127,165,111,0.5); }
+    70%{ box-shadow:0 0 0 6px rgba(127,165,111,0); }
+    100%{ box-shadow:0 0 0 0 rgba(127,165,111,0); }
+  }
+  .btn{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    color:var(--ink);
+    background:var(--panel-2);
+    border:1px solid var(--line-strong);
+    padding:7px 14px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .btn:hover{ border-color: var(--amber); background:#2a3036; }
+
+  /* ---------- KPI ROW ---------- */
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:26px;
+  }
+  .kpi{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 20px;
+    position:relative;
+    overflow:hidden;
+  }
+  .kpi::before{
+    content:'';
+    position:absolute; top:0; left:0; width:3px; height:100%;
+    background:var(--accent, var(--amber));
+  }
+  .kpi .label{
+    font-size:12px;
+    color:var(--ink-dim);
+    margin-bottom:10px;
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .kpi .label span.tag{
+    font-family:var(--font-mono);
+    font-size:10px;
+    color:var(--ink-faint);
+  }
+  .kpi .value{
+    font-family:var(--font-mono);
+    font-weight:600;
+    font-size:30px;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .kpi .value .unit{
+    font-size:14px;
+    color:var(--ink-dim);
+    margin-left:4px;
+    font-family:var(--font-body);
+  }
+  .kpi .footnote{
+    margin-top:8px;
+    font-size:11.5px;
+    color:var(--ink-faint);
+  }
+  .kpi.amber{ --accent: var(--amber); }
+  .kpi.clay{ --accent: var(--clay); }
+  .kpi.moss{ --accent: var(--moss); }
+  .kpi.wheat{ --accent: var(--wheat); }
+
+  /* ---------- PIPELINE ---------- */
+  .section-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:14px; margin-top:8px;
+  }
+  .section-head h2{
+    font-family:var(--font-display);
+    font-size:16px; font-weight:600;
+    margin:0;
+    color:var(--ink);
+  }
+  .section-head .hint{
+    font-size:12px; color:var(--ink-faint);
+  }
+
+  .pipeline{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:10px;
+    margin-bottom:30px;
+  }
+  .stage{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 14px 16px;
+    position:relative;
+  }
+  .stage .num{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-faint);
+  }
+  .stage .name{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:13.5px;
+    margin:6px 0 14px;
+    color:var(--ink);
+    min-height:34px;
+  }
+  .stage .count{
+    font-family:var(--font-mono);
+    font-size:26px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .stage .count .of{
+    font-size:12px; color:var(--ink-faint); font-family:var(--font-body);
+  }
+  .stage .bar-track{
+    height:4px; background:rgba(255,255,255,0.06); border-radius:4px; margin-top:10px; overflow:hidden;
+  }
+  .stage .bar-fill{
+    height:100%; border-radius:4px;
+    background:linear-gradient(90deg, var(--amber), var(--clay));
+  }
+  .stage::after{
+    content:'';
+    position:absolute;
+    right:-15px; top:50%;
+    transform:translateY(-50%);
+    width:0;height:0;
+    border-top:5px solid transparent;
+    border-bottom:5px solid transparent;
+    border-left:6px solid var(--line-strong);
+    z-index:2;
+  }
+  .stage:last-child::after{ display:none; }
+
+  /* ---------- FILTER BAR ---------- */
+  .filter-bar{
+    display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap;
+  }
+  .chip{
+    font-family:var(--font-mono);
+    font-size:12px;
+    padding:7px 13px;
+    border-radius:100px;
+    border:1px solid var(--line-strong);
+    background:transparent;
+    color:var(--ink-dim);
+    cursor:pointer;
+    transition:all .15s;
+    white-space:nowrap;
+  }
+  .chip:hover{ border-color:var(--amber); color:var(--ink); }
+  .chip.active{
+    background:var(--amber-soft);
+    border-color:var(--amber);
+    color:var(--amber);
+  }
+  .search-input{
+    margin-left:auto;
+    background:var(--panel);
+    border:1px solid var(--line-strong);
+    border-radius:100px;
+    padding:8px 16px;
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:13px;
+    min-width:220px;
+    outline:none;
+  }
+  .search-input::placeholder{ color:var(--ink-faint); }
+  .search-input:focus{ border-color:var(--amber); }
+
+  /* ---------- TABLE ---------- */
+  .table-panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    margin-bottom:30px;
+  }
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
+    text-align:left;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    padding:13px 16px;
+    border-bottom:1px solid var(--line-strong);
+    background:var(--panel-2);
+    white-space:nowrap;
+    cursor:pointer;
+    user-select:none;
+  }
+  thead th:hover{ color:var(--ink-dim); }
+  tbody td{
+    padding:13px 16px;
+    border-bottom:1px solid var(--line);
+    font-size:13px;
+    color:var(--ink);
+    vertical-align:middle;
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr:hover{ background:rgba(255,255,255,0.02); }
+  .t-no{ font-family:var(--font-mono); color:var(--ink-faint); font-size:12px; }
+  .t-title{ font-weight:500; max-width:280px; }
+  .t-status{ color:var(--ink-dim); font-size:12.5px; max-width:260px; }
+  .badge{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:11px;
+    padding:3px 9px;
+    border-radius:6px;
+    white-space:nowrap;
+  }
+  .badge.cat-통합구매{ background:rgba(216,178,108,0.14); color:#d8b26c; }
+  .badge.cat-원가절감{ background:var(--moss-soft); color:var(--moss); }
+  .badge.cat-인상방어{ background:var(--clay-soft); color:var(--clay); }
+  .badge.cat-수급안정{ background:rgba(120,150,200,0.16); color:#8fb0d9; }
+  .stage-pip{
+    display:flex; gap:3px;
+  }
+  .stage-pip i{
+    width:14px; height:6px; border-radius:2px;
+    background: rgba(255,255,255,0.08);
+  }
+  .stage-pip i.on{ background: var(--amber); }
+  .amt{ font-family:var(--font-mono); text-align:right; }
+  .amt.neg{ color:var(--clay); }
+  .amt.pos{ color:var(--moss); }
+  .amt.zero{ color:var(--ink-faint); }
+  .person-tag{
+    font-size:12px; color:var(--ink-dim);
+  }
+
+  .empty-state{
+    text-align:center; padding:60px 20px; color:var(--ink-faint);
+  }
+  .empty-state .big{ font-size:32px; margin-bottom:10px; }
+
+  footer{
+    text-align:center; padding-top:20px; color:var(--ink-faint); font-size:11.5px; font-family:var(--font-mono);
+  }
+
+  @media (max-width: 980px){
+    .kpi-row{ grid-template-columns:repeat(2,1fr); }
+    .pipeline{ grid-template-columns:repeat(3,1fr); }
+    .stage::after{ display:none; }
+    .search-input{ margin-left:0; width:100%; }
+  }
+  @media (max-width: 600px){
+    .pipeline{ grid-template-columns:repeat(2,1fr); }
+    .topbar{ flex-direction:column; }
+    table{ font-size:12px; }
+    .t-title{ max-width:160px; }
+  }
+
+  ::-webkit-scrollbar{ height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb{ background:var(--line-strong); border-radius:4px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="title-block">
+      <div class="eyebrow">Procurement · Cost Reduction Pipeline</div>
+      <h1>구매 절감 활동진행 현황판</h1>
+      <div class="sub" id="subhead">데이터 불러오는 중…</div>
+    </div>
+    <div class="meta-cluster">
+      <span class="pill live" id="sourcePill"><span class="dot"></span><span id="sourceLabel">로컬 데이터</span></span>
+      <span class="pill" id="updatedPill">최종 갱신 —</span>
+      <button class="btn" id="refreshBtn">새로고침</button>
+    </div>
+  </div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="section-head">
+    <h2>단계별 파이프라인</h2>
+    <div class="hint">연구소 의뢰 → 생산적용까지 6단계</div>
+  </div>
+  <div class="pipeline" id="pipelineRow"></div>
+
+  <div class="section-head">
+    <h2>과제 목록</h2>
+    <div class="hint" id="rowCountHint"></div>
+  </div>
+
+  <div class="filter-bar" id="filterBar">
+    <button class="chip active" data-filter="all">전체</button>
+    <input class="search-input" id="searchInput" placeholder="과제명, 담당자, 관리번호 검색…">
+  </div>
+
+  <div class="table-panel">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th data-key="No">No</th>
+          <th data-key="과제명">과제명</th>
+          <th data-key="과제구분">구분</th>
+          <th data-key="구매담당자">담당자</th>
+          <th data-key="현재단계번호">진행단계</th>
+          <th data-key="효과금액_한국법인">한국법인 (억원)</th>
+          <th data-key="효과금액_전체법인">전체법인 (억원)</th>
+          <th data-key="진행현황">진행현황</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="big">∅</div>
+      검색 결과가 없습니다
+    </div>
+  </div>
+
+  <footer id="footerNote">CSV 연동 대시보드 · 시트를 수정하면 새로고침 시 반영됩니다</footer>
+
+</div>
+
+<script>
+/* ============== 설정 ============== */
+// Google Sheets를 "웹에 게시 → CSV" 한 URL을 여기에 넣으면 자동으로 그 데이터를 불러옵니다.
+// 비워두면 업로드 시점의 데이터(아래 EMBEDDED_CSV)를 보여줍니다.
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTXCkUlxTWiBlu8bZe_BbkCYwTF68_6sJ8MJcO5vYjEX9-jl8L4gip1rBMA0VAjd6oDnRslAImdZ4fW/pub?gid=1628680995&single=true&output=csv";
+
+const STAGES = ["연구소 의뢰","Lab 테스트","시생산 테스트","원료확정/등록","구매요청,계약","생산적용"];
+
+const EMBEDDED_CSV = `No,과제명,최초제안일자,사장님보고일자,과제구분,관리번호,구매담당자,현재단계번호,현재단계명,구분,다음단계실행목표,효과금액_한국법인,효과금액_전체법인,진행현황
+1,대두레시틴 법인 통함구매 검토,2026-04-14,4월 13주차,통합구매,2026 - 통합구매 - 001,길민정,2,Lab 테스트,절감,,-2.4,-2.4,연구소 테스트 진행 중
+2,중국산 중탄산나트륨  법인 통함구매 검토,2026-04-13,4월 13주차,통합구매,2026 - 통합구매 - 002,길민정,2,Lab 테스트,절감,,-1.2,-1.8,연구소 테스트 진행 중
+3,중국산 중탄산암모늄  법인 통함구매 검토,2026-04-22,4월 20주차,통합구매,2026 - 통합구매 - 003,길민정,2,Lab 테스트,절감,,-2.8,-4.1,연구소 테스트 진행 중
+4,중국산 제일인산칼슘  법인 통함구매 검토,2026-04-22,4월 20주차,통합구매,2026 - 통합구매 - 004,길민정,1,연구소 의뢰,절감,,-1.5,-1.5,샘플 전달 예정 (5월 1주차)
+5,헤이즐넛&가공품 공급사 대체 검토,2026-04-28,4월 27주차,인상방어,2026 - 인상방어 - 001,길민정,3,시생산 테스트,방어,,-3,-3,관능 평가 완료 - 로스팅 기준 수립 예정
+6,잔탄검 법인 통합구매 검토,2026-04-28,4월 27주차,통합구매,2026 - 통합구매 - 005,길민정,5,"구매요청,계약",절감,,-2,-9.3,한국법인 5월 적용 예정. 해외법인 협의 중
+7,젤라틴 법인 통합구매 검토,2026-04-28,4월 27주차,통합구매,2026 - 통합구매 - 006,길민정,5,"구매요청,계약",절감,,-0.7,-1.5,"중국법인 2차 비딩 완료. 중/베 확정, 한국 보류"
+8,찐감자맛분말(SF-92086)  법인 통합구매 검토,2026-05-11,5월 11주차,통합구매,2026 - 통합구매 - 007,김승탁,5,"구매요청,계약",절감,,-0.9,-0.9,글로벌 법인 통합 단가협의 진행 중 (한국내수+중국수출)
+9,감자맛분말(GK-0719) 생산 Site 변경 검토,2026-05-11,5월 11주차,통합구매,2026 - 통합구매 - 008,김승탁,4,원료확정/등록,절감,,-0.6,-4.1,글로벌 법인 통합구매 및 생산 Site 전환 검토 중
+10,타피오카전분 4종 공급사 변경 검토,2025년 제안,보고예정,통합구매,2026 - 통합구매 - 009,김강헌,2,Lab 테스트,절감,,-1.35,-1.35,대체품 테스트 진행 중 (블렌딩/H50 직수입 검토)
+11,정백당 지대 원산지 변경 검토,2026-05-25,보고예정,통합구매,2026 - 통합구매 - 010,김승탁,6,생산적용,절감,,-1.9,-1.9,"삼양사 단가 인하 협의 완료, 하반기 원당 시세 모니터링 중"
+12,초콜렛 반제품 OEM 생산(하이칩/초코칩),2026-05-25,5월 25주차,통합구매,2026 - 통합구매 - 011,강태성,2,Lab 테스트,절감,,-5.5,-5.5,Barry社 샘플 적용 테스트 진행 중 (6/16주)
+13,전란액 → 냉동계란 대체 검토,2026-05-25,5월 25주차,통합구매,2026 - 통합구매 - 012,김승탁,2,Lab 테스트,절감,,-35,-35,설비업체 미팅 및 분쇄/해동 테스트 진행 중
+14,스낵용 프라잉오일 RBD 통합 검토,2026-05-25,6월 1주차,통합구매,2026 - 통합구매 - 013,길민정,1,연구소 의뢰,절감,,,확인중,
+15,통옥수수 원산지 호주 → 미국/브라질 변경 검토,2026-06-01,6월 1주차,수급안정,2026 - 수급안정 - 001,김강헌,1,연구소 의뢰,방어,,-2.6,-2.6,안전재고 확보 및 신규 산지 소싱 협의 중
+16,초코파이 마시멜로용 포머 법인 통함구매 검토,2026-04-28,보고예정,통합구매,2026 - 통합구매 - 014,길민정,4,원료확정/등록,절감,,0,-2.3,공급사 일원화(Kerry/세전) 검토 진행 중
+17,고융점 FAT 3종 법인 통함구매 검토,2026-05-18,보고예정,통합구매,2026 - 통합구매 - 015,길민정,2,Lab 테스트,절감,,0,-0.7,법인별/원료별 견적 재검증 진행 중
+18,말토덱스트린 분말 유통구조 최적화 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 001,김승탁,1,연구소 의뢰,절감,,-0.4,-0.4,
+19,카라기난 2종 법인 통함구매(직거래 전환),2026-05-18,보고예정,통합구매,2026 - 통합구매 - 016,길민정,5,"구매요청,계약",절감,,-0.4,-0.4,
+20,구연산류 원산지 변경 검토,2025년 제안,보고예정,통합구매,2026 - 통합구매 - 017,길민정,1,연구소 의뢰,절감,,-1.1,,
+21,트레할로스 직거래 전환 검토,2026-05-18,보고예정,원가절감,2026 - 원가절감 - 002,김승탁,6,생산적용,절감,,-0.3,,
+22,SRW 원맥직수입 가공 검토,2026-04-14,보고예정,수급안정,2026 - 수급안정 - 002,김강헌,1,연구소 의뢰,절감,,,확인중,
+23,바닐린 대체 원료/공급사 검토,검토중,보고예정,원가절감,2026 - 원가절감 - 003,이소미,1,연구소 의뢰,절감,,,확인중,
+24,알룰로오스 시럽/분말 직거래 전환 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 004,김승탁,1,연구소 의뢰,절감,,-1.2,,
+25,참붕어빵용 잉크 법인 통함구매 검토,2025년 제안,보고예정,통합구매,2026 - 통합구매 - 018,이소미,6,생산적용,절감,,,확인중,
+26,몰딩용 전분 법인 통함구매 검토,2026-06-01,보고예정,통합구매,2026 - 통합구매 - 019,김강헌,1,연구소 의뢰,절감,,,확인중,
+27,폴리글리시톨시럽 법인 통함구매 검토,2025년 제안,보고예정,통합구매,2026 - 통합구매 - 020,김승탁,1,연구소 의뢰,절감,,0,,
+28,FCP15 폰테라 version 개발검토,검토중,보고예정,수급안정,2026 - 수급안정 - 003,강태성,1,연구소 의뢰,절감,,,,
+29,Creamelt500 국산 대체품 개발 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 005,길민정,1,연구소 의뢰,절감,,-1.9,,
+30,골든시럽 국산 → 태국산 대체 변경 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 006,김승탁,1,연구소 의뢰,절감,,-1.9,,
+31,초코츄러스 씨즈닝 국내 제조사 변경검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 007,김승탁,1,연구소 의뢰,절감,,-1.7,,
+32,안나토색소 대체 공급사 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 008,이소미,1,연구소 의뢰,절감,,-1.4,,
+33,주정 대체 공급사 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 009,길민정,1,연구소 의뢰,절감,,-1.2,,
+34,정제염 호주산 → 태국산 원산지 대체 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 010,김승탁,1,연구소 의뢰,절감,,-1.1,,
+35,콘플레이크 P 독일 → 국산 대체 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 011,김강헌,1,연구소 의뢰,절감,,-0.9,,
+36,젤리용 이형유 국산 → 중국산 대체 검토,2026-04-14 00:00:00,보고예정,원가절감,2026 - 원가절감 - 012,길민정,1,연구소 의뢰,절감,,-0.8,,
+37,함수결정포도당 국산 → 중국산 대체 검토,2025년 제안,보고예정,통합구매,2026 - 통합구매 - 021,김승탁,1,연구소 의뢰,절감,,-0.3,,
+38,COCONUT EXTRA FINE 제조사 변경,2026-06-15,보고예정,통합구매,2026 - 통합구매 - 022,김강헌,1,연구소 의뢰,절감,,,확인중,
+39,건포도(이물이슈) 타소재 대체 변경검토,검토중,보고예정,수급안정,2026 - 수급안정 - 004,김강헌,1,연구소 의뢰,절감,,,확인중,
+40,시즈닝용 수입 세립당/정백당(2차원료) 대체검토 ,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 013,김승탁,1,연구소 의뢰,절감,,,확인중,
+41,조미가공염 국내 공급사 대체 변경,검토중,보고예정,원가절감,2026 - 원가절감 - 014,김승탁,1,연구소 의뢰,절감,,,확인중,
+42,EXCELSPONGE 559K 법인 통합 대체 변경 검토,2025년 제안,보고예정,통합구매,2026 - 통합구매 - 023,길민정,1,연구소 의뢰,절감,,,확인중,
+43,H50K(타피오카 변성전분) 할당 적용 법인 통합검토,검토중,보고예정,통합구매,2026 - 통합구매 - 024,김강헌,1,연구소 의뢰,절감,,,확인중,
+44,N450 직수입 → 내자 공급사 변경 검토,2026-04-14,보고예정,원가절감,2026 - 원가절감 - 015,김강헌,1,연구소 의뢰,절감,,,확인중,
+45,롤드오트 입찰진행,검토중,보고예정,원가절감,2026 - 원가절감 - 016,김강헌,1,연구소 의뢰,절감,,,확인중,
+46,토코허브G(밀양) 대체 원료 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 017,길민정,1,연구소 의뢰,절감,,0.9,,
+47,식물성유크림 네떼퓨어 대체 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 018,길민정,1,연구소 의뢰,절감,,0.5,,
+48,수크랄로스 공급사 대체 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 019,길민정,1,연구소 의뢰,절감,,0.1,,
+49,에너지바용 피쉬콜라겐 대체 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 020,길민정,1,연구소 의뢰,절감,,1.1,,
+50,브라우니용 가공버터 대체 변경 검토,2025년 제안,보고예정,원가절감,2026 - 원가절감 - 021,강태성,1,연구소 의뢰,절감,,-1.9,,
+51,TYPE PV 법인 통합 대체 변경 검토,2025년 제안,보고예정,통합구매,2026 - 통합구매 - 025,길민정,1,연구소 의뢰,절감,,,확인중,
+52,PGV100 법인 통합 대체 변경 검토,2025년 제안,보고예정,통합구매,2026 - 통합구매 - 026,길민정,1,연구소 의뢰,절감,,,확인중,
+`;
+
+/* ============== 상태 ============== */
+let allRows = [];
+let activeCatFilter = "all";
+let searchTerm = "";
+let sortKey = null;
+let sortDir = 1;
+
+/* ============== CSV 파서 ============== */
+function parseCSV(text){
+  const rows = [];
+  let i=0, field='', row=[], inQuotes=false;
+  // strip BOM
+  if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  while(i < text.length){
+    const c = text[i];
+    if(inQuotes){
+      if(c === '"'){
+        if(text[i+1] === '"'){ field+='"'; i+=2; continue; }
+        inQuotes=false; i++; continue;
+      }
+      field += c; i++; continue;
+    } else {
+      if(c === '"'){ inQuotes=true; i++; continue; }
+      if(c === ','){ row.push(field); field=''; i++; continue; }
+      if(c === '\r'){ i++; continue; }
+      if(c === '\n'){ row.push(field); rows.push(row); row=[]; field=''; i++; continue; }
+      field += c; i++; continue;
+    }
+  }
+  if(field.length || row.length){ row.push(field); rows.push(row); }
+  if(!rows.length) return [];
+  const header = rows[0];
+  return rows.slice(1).filter(r => r.length > 1 || (r[0] && r[0].trim() !== '')).map(r => {
+    const obj = {};
+    header.forEach((h,idx) => obj[h.trim()] = (r[idx] !== undefined ? r[idx] : '').trim());
+    return obj;
+  });
+}
+
+function num(v){
+  if(v === null || v === undefined || v === '') return null;
+  const n = parseFloat(v);
+  return isNaN(n) ? null : n;
+}
+
+/* ============== 데이터 로드 ============== */
+async function loadData(){
+  document.getElementById('subhead').textContent = '데이터 불러오는 중…';
+  if(SHEET_CSV_URL && SHEET_CSV_URL.trim() !== ""){
+    try{
+      const res = await fetch(SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + 'cachebust=' + Date.now());
+      if(!res.ok) throw new Error('fetch failed: ' + res.status);
+      const text = await res.text();
+      allRows = parseCSV(text);
+      document.getElementById('sourceLabel').textContent = 'Google Sheets 연동';
+      document.getElementById('sourcePill').classList.add('live');
+    }catch(e){
+      console.error(e);
+      allRows = parseCSV(EMBEDDED_CSV);
+      document.getElementById('sourceLabel').textContent = '연동 실패 — 로컬 데이터 표시';
+      document.getElementById('sourcePill').classList.remove('live');
+    }
+  } else {
+    allRows = parseCSV(EMBEDDED_CSV);
+    document.getElementById('sourceLabel').textContent = '로컬 데이터 (시트 미연동)';
+    document.getElementById('sourcePill').classList.remove('live');
+  }
+  document.getElementById('updatedPill').textContent = '최종 갱신 ' + new Date().toLocaleString('ko-KR', {hour12:false});
+  render();
+}
+
+/* ============== 렌더링 ============== */
+function render(){
+  const rows = allRows;
+  document.getElementById('subhead').textContent = `총 ${rows.length}건의 절감/방어 과제 · 6단계 파이프라인 추적`;
+
+  renderKPIs(rows);
+  renderPipeline(rows);
+  renderFilters(rows);
+  renderTable();
+}
+
+function renderKPIs(rows){
+  let totalKR = 0, totalALL = 0;
+  let activeCount = 0;
+  let completeCount = 0;
+  rows.forEach(r => {
+    const kr = num(r['효과금액_한국법인']);
+    const all = num(r['효과금액_전체법인']);
+    if(kr !== null) totalKR += kr;
+    if(all !== null) totalALL += all;
+    const stage = num(r['현재단계번호']);
+    if(stage === 6) completeCount++;
+    if(stage !== null && stage < 6) activeCount++;
+  });
+  const kpis = [
+    {label:'한국법인 연간 절감액', tag:'KOR', value: totalKR.toFixed(1), unit:'억원', accent:'clay', note:'음수는 비용 절감 효과'},
+    {label:'전체법인 연간 절감액', tag:'GLOBAL', value: totalALL.toFixed(1), unit:'억원', accent:'amber', note: rows.length + '개 과제 합산'},
+    {label:'진행 중인 과제', tag:'ACTIVE', value: activeCount, unit:'건', accent:'wheat', note:'1~5단계 진행 중'},
+    {label:'생산적용 완료', tag:'DONE', value: completeCount, unit:'건', accent:'moss', note:'6단계 도달'},
+  ];
+  document.getElementById('kpiRow').innerHTML = kpis.map(k => `
+    <div class="kpi ${k.accent}">
+      <div class="label">${k.label}<span class="tag">${k.tag}</span></div>
+      <div class="value">${k.value}<span class="unit">${k.unit}</span></div>
+      <div class="footnote">${k.note}</div>
+    </div>
+  `).join('');
+}
+
+function renderPipeline(rows){
+  const counts = STAGES.map(()=>0);
+  rows.forEach(r => {
+    const s = num(r['현재단계번호']);
+    if(s !== null && s >= 1 && s <= 6) counts[s-1]++;
+  });
+  const total = rows.length || 1;
+  document.getElementById('pipelineRow').innerHTML = STAGES.map((name, idx) => {
+    const c = counts[idx];
+    const pct = Math.round((c/total)*100);
+    return `
+      <div class="stage">
+        <div class="num">STEP ${idx+1}</div>
+        <div class="name">${name}</div>
+        <div class="count">${c}<span class="of"> / ${total}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderFilters(rows){
+  const cats = [...new Set(rows.map(r => r['과제구분']).filter(Boolean))];
+  const bar = document.getElementById('filterBar');
+  const existing = bar.querySelectorAll('.chip[data-filter]:not([data-filter="all"])');
+  existing.forEach(e => e.remove());
+  const searchInput = document.getElementById('searchInput');
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.dataset.filter = cat;
+    btn.textContent = cat;
+    btn.addEventListener('click', () => {
+      activeCatFilter = cat;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderTable();
+    });
+    bar.insertBefore(btn, searchInput);
+  });
+  const allBtn = bar.querySelector('[data-filter="all"]');
+  allBtn.onclick = () => {
+    activeCatFilter = 'all';
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    allBtn.classList.add('active');
+    renderTable();
+  };
+}
+
+function getFilteredSorted(){
+  let rows = allRows.filter(r => {
+    if(activeCatFilter !== 'all' && r['과제구분'] !== activeCatFilter) return false;
+    if(searchTerm){
+      const hay = (r['과제명']+' '+r['구매담당자']+' '+r['관리번호']+' '+r['진행현황']).toLowerCase();
+      if(!hay.includes(searchTerm.toLowerCase())) return false;
+    }
+    return true;
+  });
+  if(sortKey){
+    rows = rows.slice().sort((a,b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      const an = num(av), bn = num(bv);
+      if(an !== null && bn !== null){ return (an-bn)*sortDir; }
+      av = (av||'').toString(); bv = (bv||'').toString();
+      return av.localeCompare(bv, 'ko') * sortDir;
+    });
+  }
+  return rows;
+}
+
+function renderTable(){
+  const rows = getFilteredSorted();
+  document.getElementById('rowCountHint').textContent = `${rows.length}건 표시 중`;
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  if(!rows.length){
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = rows.map(r => {
+    const stageNum = num(r['현재단계번호']) || 0;
+    const pips = STAGES.map((_,i) => `<i class="${i < stageNum ? 'on':''}"></i>`).join('');
+    const kr = num(r['효과금액_한국법인']);
+    const all = num(r['효과금액_전체법인']);
+    const krClass = kr === null ? '' : (kr < 0 ? 'neg' : (kr > 0 ? 'pos':'zero'));
+    const allClass = all === null ? '' : (all < 0 ? 'neg' : (all > 0 ? 'pos':'zero'));
+    const catSafe = (r['과제구분']||'').replace(/[^가-힣A-Za-z0-9]/g,'');
+    return `
+      <tr>
+        <td class="t-no">${r['No']||''}</td>
+        <td class="t-title">${escapeHtml(r['과제명']||'')}</td>
+        <td><span class="badge cat-${catSafe}">${escapeHtml(r['과제구분']||'')}</span></td>
+        <td class="person-tag">${escapeHtml(r['구매담당자']||'')}</td>
+        <td><div class="stage-pip" title="${escapeHtml(r['현재단계명']||'')}">${pips}</div></td>
+        <td class="amt ${krClass}">${kr === null ? '—' : kr.toFixed(1)}</td>
+        <td class="amt ${allClass}">${all === null ? '—' : all.toFixed(1)}</td>
+        <td class="t-status">${escapeHtml(r['진행현황']||'')}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ============== 이벤트 ============== */
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  searchTerm = e.target.value;
+  renderTable();
+});
+document.getElementById('refreshBtn').addEventListener('click', loadData);
+document.querySelectorAll('#dataTable thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if(sortKey === key){ sortDir *= -1; } else { sortKey = key; sortDir = 1; }
+    renderTable();
+  });
+});
+
+/* 5분마다 자동 새로고침 (시트 연동 시에만 의미 있음) */
+setInterval(loadData, 5*60*1000);
+
+loadData();
+</script>
+</body>
+</html>
