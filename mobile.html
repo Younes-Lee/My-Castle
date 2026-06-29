@@ -363,13 +363,43 @@
   .badge.cat-수급안정{ background:rgba(120,150,200,0.16); color:#8fb0d9; }
 
   .card-meta{
-    display:flex; flex-wrap:wrap; gap:6px 14px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:8px;
     font-size:12.5px; color:var(--ink-dim);
     margin-bottom:10px;
+  }
+  .card-meta .meta-left{
+    display:flex; flex-direction:column; gap:5px;
   }
   .card-meta .meta-item{ display:flex; gap:5px; align-items:baseline; }
   .card-meta .meta-label{ color:var(--ink-faint); font-size:11px; }
   .meta-item .unassigned{ color:var(--ink-faint); font-style:italic; }
+
+  .date-boxes{
+    display:flex; gap:6px; flex-shrink:0;
+  }
+  .date-box{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:5px 9px;
+    text-align:center;
+    min-width:54px;
+  }
+  .date-box .date-label{
+    font-size:9px; color:var(--ink-faint);
+    white-space:nowrap;
+    margin-bottom:2px;
+  }
+  .date-box .date-value{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+  .date-box.elapsed .date-value{ color:var(--amber); }
+  .date-box.elapsed.warn .date-value{ color:var(--orion-red); }
 
   .card-stage{
     display:flex; align-items:center; gap:8px; margin-bottom:10px;
@@ -578,6 +608,25 @@ function num(v){
   return isNaN(n) ? null : n;
 }
 
+function parseDate(v){
+  if(!v) return null;
+  const s = v.trim();
+  // YYYY-MM-DD 형식 우선
+  const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function daysBetween(d1, d2){
+  const ms = d2.setHours(0,0,0,0) - d1.setHours(0,0,0,0);
+  return Math.round(ms / 86400000);
+}
+
+function formatDateShort(d){
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+
 /* ============== 데이터 로드 ============== */
 async function loadData(){
   document.getElementById('subhead').textContent = '데이터 불러오는 중…';
@@ -731,6 +780,20 @@ function renderCards(){
     const catSafe = (r['과제구분']||'').replace(/[^가-힣A-Za-z0-9]/g,'');
     const labPerson = (r['연구소담당자']||'').trim();
     const labHtml = labPerson ? escapeHtml(labPerson) : '<span class="unassigned">미정</span>';
+
+    // 최초 진행일 (최초제안일자 기준)
+    const startDate = parseDate(r['최초제안일자']);
+    const startLabel = startDate ? formatDateShort(startDate) : '—';
+
+    // 현단계 경과일: 시트에 '현단계진입일'이 있으면 그 날짜 기준, 없으면 최초제안일자 기준
+    const stageEnterDate = parseDate(r['현단계진입일']) || startDate;
+    let elapsedDays = null;
+    if(stageEnterDate){
+      elapsedDays = daysBetween(new Date(stageEnterDate), new Date());
+    }
+    const elapsedWarn = elapsedDays !== null && elapsedDays >= 60;
+    const elapsedLabel = elapsedDays === null ? '—' : `+${elapsedDays}일`;
+
     return `
       <div class="task-card">
         <div class="card-top">
@@ -739,8 +802,20 @@ function renderCards(){
           <span class="badge cat-${catSafe}">${escapeHtml(r['과제구분']||'')}</span>
         </div>
         <div class="card-meta">
-          <span class="meta-item"><span class="meta-label">구매</span>${escapeHtml(r['구매담당자']||'')}</span>
-          <span class="meta-item"><span class="meta-label">연구소</span>${labHtml}</span>
+          <div class="meta-left">
+            <span class="meta-item"><span class="meta-label">구매</span>${escapeHtml(r['구매담당자']||'')}</span>
+            <span class="meta-item"><span class="meta-label">연구소</span>${labHtml}</span>
+          </div>
+          <div class="date-boxes">
+            <div class="date-box">
+              <div class="date-label">최초 진행일</div>
+              <div class="date-value">${startLabel}</div>
+            </div>
+            <div class="date-box elapsed ${elapsedWarn ? 'warn':''}">
+              <div class="date-label">현단계 경과일</div>
+              <div class="date-value">${elapsedLabel}</div>
+            </div>
+          </div>
         </div>
         <div class="card-stage">
           <div class="stage-pip" title="${escapeHtml(stageName)}">${pips}</div>
